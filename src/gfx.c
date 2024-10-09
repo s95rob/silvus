@@ -18,9 +18,13 @@ typedef struct {
 
 static gfx_ctx_t* g_gfx = 0;
 
+#pragma push(pack, 1)
+
 typedef struct {
 	vec3 position;
 } vertex_t;
+
+#pragma pop
 
 void gfx_init() {
 	g_gfx = calloc(1, sizeof(gfx_ctx_t));
@@ -197,7 +201,7 @@ mesh_t gfx_load_mesh(const char* filepath) {
 	u32 position_indices[3];
 
 	vertex_t* vertices = malloc(sizeof(vertex_t) * numFaces * 3);
-	u32 vertexIndex = 0;
+	u32 vi = 0;
 	while (!feof(fp)) {
 		fgets(line, 256, fp);
 
@@ -209,11 +213,12 @@ mesh_t gfx_load_mesh(const char* filepath) {
 		if (sscanf(line, "f %i/%*i/%*i %i/%*i/%*i %i/%*i/%*i\n",
 			&position_indices[0], &position_indices[1], &position_indices[2]) == 3) {
 			vertex_t face[3];
-			vec3_dup(face[0].position, positions[position_indices[0]]);
-			vec3_dup(face[1].position, positions[position_indices[1]]);
-			vec3_dup(face[2].position, positions[position_indices[2]]);
+			vec3_dup(face[0].position, positions[position_indices[0] - 1]);
+			vec3_dup(face[1].position, positions[position_indices[1] - 1]);
+			vec3_dup(face[2].position, positions[position_indices[2] - 1]);
 
-			memcpy(&vertices[vertexIndex], face, sizeof(face));
+			memcpy(&vertices[vi], face, sizeof(face));
+			vi += 3;
 		}
 	}
 
@@ -223,9 +228,14 @@ mesh_t gfx_load_mesh(const char* filepath) {
 		GL_STATIC_DRAW);
 
 	free(positions);
-	free(vertices);
+	//free(vertices);
 
 	mesh.numElements = numFaces * 3;
 
 	return mesh;
+}
+
+void gfx_free_mesh(mesh_t* mesh) {
+	glDeleteBuffers(1, &mesh->vbo);
+	mesh->numElements = 0;
 }

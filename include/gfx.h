@@ -25,3 +25,4 @@ void gfx_draw_sprite(rect_t* rect);
 void gfx_draw_mesh(mat4x4 transform, mesh_t* mesh);
 
 mesh_t gfx_load_mesh(const char* filepath);
+void gfx_free_mesh(mesh_t* mesh);

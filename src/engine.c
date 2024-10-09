@@ -25,6 +25,8 @@ void engine_init() {
 }
 
 void engine_fin() {
+	gfx_free_mesh(&cube);
+
 	gfx_fin();
 	display_fin();
 
@@ -36,18 +38,25 @@ void engine_run() {
 	mat4x4 viewProj;
 	mat4x4_perspective(viewProj, 90.0f, 800.0f / 600.0f, 0.1f, 1000.0f);
 
-	mat4x4 transform;
-	mat4x4_identity(transform);
-
 	while (g_engine->running) {
 		display_poll_events();
 		gfx_begin_frame();
 
+		mat4x4 identity, model, trans, rot;
+		mat4x4_identity(identity);
+		mat4x4_identity(trans);
+
+		mat4x4_translate(trans, 0.0f, 0.0f, -5.0f);
+		mat4x4_rotate_Y(rot, identity, i * 0.16f);
+		mat4x4_mul(model, trans, rot);
+
 		gfx_set_viewProjection(viewProj);
-		gfx_draw_mesh(transform, &cube);
+		gfx_draw_mesh(model, &cube);
 
 		gfx_end_frame();
 		display_present();
+
+		i += 0.16f;
 	}
 }
 

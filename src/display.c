@@ -25,6 +25,8 @@ void display_init() {
 }
 
 void display_fin() {
+	glfwMakeContextCurrent(0);
+	// todo: causes problems
 	glfwDestroyWindow(g_display->window);
 	glfwTerminate();
 
