@@ -19,7 +19,7 @@ void engine_init() {
 	display_init();
 	gfx_init();
 
-	cube = gfx_load_mesh("untitled.obj");
+	cube = gfx_load_mesh("torus.obj");
 
 	g_engine->running = TRUE;
 }
